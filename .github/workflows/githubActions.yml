@@ -42,3 +42,32 @@ jobs:
       # ✅ Build APK (optional but recommended)
       - name: Build Debug APK
         run: ./gradlew assembleDebug
+      # 📊 Upload Reports (VERY IMPORTANT)
+      - name: Upload Test Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: app/build/reports/tests/
+
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Unit Tests
+          path: app/build/test-results/testDebugUnitTest/*.xml
+          reporter: java-junit
+
+      - name: Upload Lint Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: app/build/reports/lint-results*.html
+
+
+      - name: Publish Lint Results
+        uses: mikepenz/action-junit-report@v4
+        if: always()
+        with:
+          report_paths: app/build/reports/lint-results-debug.xml
